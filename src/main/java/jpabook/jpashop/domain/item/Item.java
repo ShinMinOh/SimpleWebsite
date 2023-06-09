@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
+@Getter @Setter
 @DiscriminatorColumn(name = "dtype")  //구분코드
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 /*상속관계는 전략을 지정해야함. 전략은 부모클래스에 잡아줘야 함. SINGLE_TABLE전략을 사용.
