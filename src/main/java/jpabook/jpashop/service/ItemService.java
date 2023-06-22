@@ -1,5 +1,6 @@
 package jpabook.jpashop.service;
 
+import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,14 @@ public class ItemService {
     @Transactional  //위에 readOnly=true 어노테이션을 디폴트로 지정했으므로 item저장이 반영되기 위해서 따로 @Transactional을 써줘야함. 안하면 반영안됨.
     public void saveItem(Item item){
         itemRepository.save(item);
+    }
+
+    @Transactional  //update날린거라 return필요 없으므로 void 타입
+    public void updateItem(Long itemId, String name, int price, int stockQuantity){
+        Item findItem = itemRepository.findOne(itemId);
+        findItem.setName(name);
+        findItem.setPrice(price);
+        findItem.setStockQuantity(stockQuantity);
     }
 
     public List<Item> findItems(){
