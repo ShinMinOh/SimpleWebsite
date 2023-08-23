@@ -1,9 +1,11 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +17,13 @@ public class Member {
     @Column(name = "member_id")
     private Long Id;
 
+    @NotEmpty
     private String name;
 
     @Embedded  //내장타입을 포함했다는 어노테이션. Address 클래스의 @Embeddable을 지워도 상관x.둘중 하나만 쓰면 됨. 그냥 2개다 쓰기
     private Address address;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 

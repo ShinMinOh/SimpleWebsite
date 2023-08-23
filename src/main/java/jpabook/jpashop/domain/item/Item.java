@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter @Setter
 @DiscriminatorColumn(name = "dtype")  //구분코드
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)  //싱글테이블 전략
 /*상속관계는 전략을 지정해야함. 전략은 부모클래스에 잡아줘야 함. SINGLE_TABLE전략을 사용.
   JOINED: 가장 정규화된 스타일.
   SINGLE_TABLE: 한테이블에 다 때려박는 스타일.
