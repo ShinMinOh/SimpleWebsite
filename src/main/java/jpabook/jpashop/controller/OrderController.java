@@ -13,7 +13,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+/**
+ * 총 주문 2개
+ * *userA
+ *   * JPA1 BOOK
+ *   * JPA2 BOOK
+ * *userA
+ *   * SPRING1 BOOK
+ *   * SPRING2 BOOK*/
 @Controller
 @RequiredArgsConstructor
 public class OrderController  {
@@ -47,6 +54,7 @@ public class OrderController  {
     public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch, Model model){
         //검색조건들이 다 여기에 담겨서 넘어옴. OrderSearch는 회원이름과 주무상태로 서치가능. 화면그려야 되니까 model필요.
         List<Order> orders = orderService.findOrders(orderSearch);
+
         model.addAttribute("orders", orders);
 
         return "order/orderList";
