@@ -57,7 +57,7 @@ public class Order {
         orderItem.setOrder(this);   //반대로 orderItem 즉 넘어 온 애에다가 this를 넣어주기. OrderItem 엔티티의 order에다 set으로 넣기
     }
 
-    public void     setDelivery(Delivery delivery){
+    public void  setDelivery(Delivery delivery){
         this.delivery = delivery;
         delivery.setOrder(this);    //Delivery 엔티티의 order에다 set으로 넣기.
     }
@@ -68,10 +68,13 @@ public class Order {
         order.setMember(member);
         order.setDelivery(delivery);
 
+        List<OrderItem> temp = new ArrayList<>();
+
         for(OrderItem orderItem : orderItems){
             order.addOrderItem(orderItem);
 
         }
+
         order.setStatus(OrderStatus.ORDER);         //상태세팅
         order.setOrderDate(LocalDateTime.now());    //현재시간으로 주문시간정보세팅
         return order;

@@ -8,7 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-
+/**
+ * 총 주문 2개
+ * *userA
+ *   * JPA1 BOOK
+ *   * JPA2 BOOK
+ * *userA
+ *   * SPRING1 BOOK
+ *   * SPRING2 BOOK*/
 @Component //spring이 component 스캔 대상이 됨.
 @RequiredArgsConstructor
 public class InitDb {
