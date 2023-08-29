@@ -5,6 +5,8 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
-
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
     /**
      * V1. 엔티티 직접 노출(fetch join 사용X)
      * 양방향 관계 문제 발생 -> @JsonIgnore
@@ -50,10 +52,10 @@ public class OrderSimpleApiController {
      * 단점 : 지연로딩으로 쿼리 N번 호출
      * */
     @GetMapping("/api/v2/simple-orders")
-    public List<SimpleOrderDtoV2> ordersV2(){
+    public List<SimpleOrderDto> ordersV2(){
         List<Order> orders = orderRepository.findAllByString(new OrderSearch()); //이대로 반환하면 안됨. SimpleOrderDto타입으로 바꿔야함.
-        List<SimpleOrderDtoV2> result = orders.stream()
-                .map(o -> new SimpleOrderDtoV2(o))
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
 
 
@@ -61,14 +63,14 @@ public class OrderSimpleApiController {
     }
 
     @Data
-    static class SimpleOrderDtoV2 {
+    static class SimpleOrderDto {
         private Long orderId;
         private String name;
         private LocalDateTime orderDate;
         private OrderStatus orderStatus;
         private Address address; //배송지정보
 
-        public SimpleOrderDtoV2(Order order) {
+        public SimpleOrderDto(Order order) {
             orderId = order.getId();
             name = order.getMember().getName(); //LAZY 초기화 : 영속성컨텍스트가 memberid를 가지고 찾고 없으면 db에 쿼리날림.
             orderDate = order.getOrderDate();
@@ -76,4 +78,28 @@ public class OrderSimpleApiController {
             address = order.getDelivery().getAddress(); //LAZY 초기화
         }
     }
+
+    /**
+     * V3. 엔티티를 조회해서 DTO로 변환(fetch join 사용 O)
+     * * - fetch join으로 쿼리 1번 호출
+     * V2 와 V3는 비슷하지만 나가는 쿼리수가 엄청 차이남.
+     * */
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3(){
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+    }
+     /**
+      * V4. JPA에서 DTO로 바로 조회
+      * - 쿼리 1번 호출
+      * - select 절에서 원하는 데이터만 선택해서 조회
+      */
+        @GetMapping("/api/v4/simple-orders")
+        public List<OrderSimpleQueryDto> ordersV4(){
+            return orderSimpleQueryRepository.findOrderDtos();
+        }
 }

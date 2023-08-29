@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/**
+ * 회원 조회 API worse & best version
+ * 회원 등록 API worse & best version
+ * 회원 수정 API worse & best version
+ * */
 @RestController //@Controller + @ResponseBody( 데이터 자체를 바로 json이나 xml보내고자 할때) : REST API스타일로 만드는것
 @RequiredArgsConstructor
 public class MemberApiController {
