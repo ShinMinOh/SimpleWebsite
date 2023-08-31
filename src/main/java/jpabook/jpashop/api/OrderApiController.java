@@ -1,14 +1,21 @@
 package jpabook.jpashop.api;
 
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 주문내역에서 추가로 주문한 상품 정보를 추가로 조회
  * Order 기준으로 컬렉션인 OrderItem 와 Item 이 필요
@@ -32,4 +39,58 @@ public class OrderApiController {
         }
         return all;
     }
+
+     @GetMapping("/api/v2/orders")
+     public List<OrderDto> ordersV2(){
+         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+         List<OrderDto> result = orders.stream()  //orders -> OrderDto 로 변환
+                 .map(o -> new OrderDto(o))
+                 .collect(Collectors.toList());
+
+         return result;
+     }
+
+     @Getter
+     static class OrderDto{
+            // Dto에는 아래 6가지 정보를 노출시킬 예정.
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address;                //Address 같은 value object는 엔티티 노출시켜도 상관X.바뀔 일 없고 쭉 써야되는 값
+        //private List<OrderItem> orderItems;  //Dto 안에 엔티티(OrderItem)이 있으면 안됌.노출위험성,API 스펙 변경 가능성. 이 조차도 Dto로 다 변환해줘야함.
+        private List<OrderItemDto> orderItems;  //외부에 OrderDto 안에 OrderItemDto로 랩핑해서 나가게 됨.
+
+
+         public OrderDto(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName();
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress();
+            orderItems = order.getOrderItems().stream()
+                    .map(orderItem -> new OrderItemDto(orderItem))
+                    .collect(Collectors.toList());
+
+            /* order.getOrderItems().stream().forEach(o -> o.getItem().getName()); //orderItems는 엔티티이므로 프록시 강제 초기화가 필요. 없을경우 null로 나옴.
+            orderItems = order.getOrderItems();
+            */
+         }
+     }
+
+     @Getter
+     static class OrderItemDto{
+            //API 스펙상 상품명,주문한가격,카운트 3개만 필요하다.
+        private String itemName;  //상품 명
+        private int orderPrice;  //주문 가격
+        private int count;  //주문 수량
+
+        public OrderItemDto(OrderItem orderItem){
+            itemName = orderItem.getItem().getName();
+            orderPrice = orderItem.getOrderPrice();
+            count = orderItem.getCount();
+
+        }
+     }
+
 }
