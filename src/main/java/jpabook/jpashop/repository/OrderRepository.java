@@ -82,6 +82,17 @@ public class OrderRepository {
     }
 
 
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+        //페치조인을 사용해서 페이징처리할 경우 메모리에서 페이징처리가 진행됨 -> 데이터가 많을 경우 메모리에 부하가 걸림!!!
+
+    }
 }
 
 
