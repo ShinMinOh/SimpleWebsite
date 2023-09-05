@@ -93,6 +93,16 @@ public class OrderRepository {
         //페치조인을 사용해서 페이징처리할 경우 메모리에서 페이징처리가 진행됨 -> 데이터가 많을 경우 메모리에 부하가 걸림!!!
 
     }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m " +
+                        " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }
 
 
