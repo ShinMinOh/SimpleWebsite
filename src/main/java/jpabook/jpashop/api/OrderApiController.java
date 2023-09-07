@@ -91,6 +91,15 @@ public class OrderApiController {
 
     }
 
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5(){
+        return orderQueryRepository.findAllByDto_optimization();
+    }
+
+   /* @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6(){
+        return orderQueryRepository.findAllByDto_flat();
+    }*/
 
      @Getter
      static class OrderDto{
