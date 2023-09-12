@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * OrderApiController 안에 있는 OrderDto를 참조하게 되면 OrderQueryRepository가 Controller을 참조하는 순환관계가 되어버림
  * */
 @Data
+@EqualsAndHashCode(of = "orderId")
 public class OrderQueryDto {
 
     @JsonIgnore
@@ -30,5 +32,14 @@ public class OrderQueryDto {
         this.orderStatus = orderStatus;
         this.address = address;
         //orderItems는 1대다관계이므로 데이터가 늘어나 넣을 수 없음.
+    }
+
+    public OrderQueryDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus, Address address, List<OrderItemQueryDto> orderItems) {
+        this.orderId = orderId;
+        this.name = name;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
+        this.address = address;
+        this.orderItems = orderItems;
     }
 }
